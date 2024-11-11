@@ -7,7 +7,6 @@ class VariableManager :
         'f' : float,
         'b' : bool
     }
-
     __VARS = {}
 
 
@@ -24,8 +23,6 @@ class VariableManager :
             self.__TYPE[_type],
             val
         )
-
-        print(self.__VARS)
         
     def get_var (self, key) :
         return self.__VARS.get(key, None) 
