@@ -1,9 +1,10 @@
 from var_manager import VariableManager
-
+from method_manager import MethodManager
 
 class CodeParser:
 
     __vars = VariableManager()
+    __methods = MethodManager()
     __line = 0
     
 
@@ -12,11 +13,34 @@ class CodeParser:
         
         for line in code_lines : 
             
+            if line.startswith('@') : 
+                method_name, *more = line[1:].split(':')
+                if more : 
+                    args = self.__parse_method_args(more[0])
+                    self.__methods.call(method_name, args)
+                else:
+                    self.__methods.call(method_name)
+                
             if line.startswith(self.__vars.get_types_keys()) and ":" in line : 
                 self.__parse_variable(line)
 
             self.__line += 1
             
+
+    def __parse_method_args (self, args_txt) :
+        func_vars = args_txt.strip().split(',')
+        args = []
+        for v in func_vars : 
+            v = v.strip()
+            var_value = self.__vars.get_var(v)
+            if var_value:
+                _type, val = var_value
+                value = _type(val)
+            else:
+                raise ValueError(f"Variable '{v}' not declared ")
+            args.append(value)
+
+        return args
 
     def __parse_variable (self, line:str) : 
         if ":" not in line:

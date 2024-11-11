@@ -8,12 +8,12 @@ class Interpreter :
         CodeParser(code_lines)
             
     def run_line (self, code) : 
-        self.__code_lines.append(code)
-        try :
-            CodeParser(self.__code_lines)
-        except Exception as error:
-            print("Error: ", error)
-            self.__code_lines.pop()
+        CodeParser(code)
+        # self.__code_lines.append(code)
+        # try :
+        # except Exception as error:
+        #     print("Error: ", error)
+        #     self.__code_lines.pop()
 
 
 if __name__ == "__main__" : 
