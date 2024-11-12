@@ -14,7 +14,7 @@ class CodeParser:
         
         for line in code_lines : 
 
-            # work with comments
+            # ignore the comments 
             if line.startswith('#') or len(line) == 0:
                 continue
             
@@ -27,6 +27,8 @@ class CodeParser:
             if line.startswith('method'):
                 method_name, *method_args = line.split(':')
                 self.current_method_name = method_name.split(' ')[1]
+                if self.current_method_name in self.__methods.built_ins_method_names() :
+                    raise Exception(f"you cannot use this method_name '{self.current_method_name}' try another ")
                 self.method_code.clear()
             
             # work with methods
@@ -63,7 +65,7 @@ class CodeParser:
             else:
                 var_value = self.__vars.get_var(v)
                 if not var_value:
-                    raise ValueError(f"Variable '{v}' not declared ")
+                    raise Exception(f"Variable not found {var_value}")
                 args.append(var_value)
 
         return args

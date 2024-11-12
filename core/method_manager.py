@@ -14,7 +14,7 @@ class MethodManager :
     __BUILT_IN = {
         'cleanScreen' : cleanScreen,
         'write' : write,
-        'userInput' : userInput
+        'userInput' : userInput,
     }
 
     __USER_DEFINE : dict[str, UserDefineMethod] = {}
@@ -37,12 +37,12 @@ class MethodManager :
             response = self.__BUILT_IN[method_name]()
 
         return response
-
         
     def define_method(self, method_name, method_code, CodeParser) :
-        method_obj = UserDefineMethod(method_code, CodeParser)
-        self.__USER_DEFINE[method_name] = method_obj
-        
+        self.__USER_DEFINE[method_name] = UserDefineMethod(method_code, CodeParser)
+    
+    def built_ins_method_names(self) : 
+        return self.__BUILT_IN.keys()
 
     def __call_user_define_method (self, name) :
         response = self.__USER_DEFINE.get(name).call()
