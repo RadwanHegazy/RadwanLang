@@ -22,9 +22,10 @@ class VariableManager :
         
         if val :
             try :
-                self.__TYPE[_type](val)
+                var_type = self.__TYPE[_type](val)
             except ValueError : 
                 raise ValueError(f"Invalid data value '{val}' to variable '{key}' with data type '{_type}' ")
+
 
         self.__VARS[key] = (
             self.__TYPE[_type],

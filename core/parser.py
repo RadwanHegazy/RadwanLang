@@ -7,13 +7,27 @@ class CodeParser:
     __methods = MethodManager()
     __line = 0
     
+    current_method_name = None
+    method_code = []
 
     def __init__(self, code_lines:list[str]) -> None:
+        
         for line in code_lines : 
 
             # work with comments
             if line.startswith('#') or len(line) == 0:
                 continue
+            
+            if self.current_method_name :
+                if line.startswith('    '):
+                    self.method_code.append(line.strip()) 
+                    self.__methods.define_method(self.current_method_name, self.method_code, CodeParser)
+            
+
+            if line.startswith('method'):
+                method_name, *method_args = line.split(':')
+                self.current_method_name = method_name.split(' ')[1]
+                self.method_code.clear()
             
             # work with methods
             if line.startswith('@') : 
@@ -30,8 +44,11 @@ class CodeParser:
                     self.__vars = response
 
             # work with variables
-            if line.startswith(self.__vars.get_types_keys()) and ":" in line : 
-                self.__parse_variable(line)
+            try :
+                if line.startswith(self.__vars.get_types_keys()) and ":" in line : 
+                    self.__parse_variable(line)
+            except Exception:
+                pass
 
             self.__line += 1
             
@@ -45,12 +62,8 @@ class CodeParser:
                 args.append(v)
             else:
                 var_value = self.__vars.get_var(v)
-                if var_value:
-                    _type, val, *other = var_value
-                    value = _type(val)
-                else:
+                if not var_value:
                     raise ValueError(f"Variable '{v}' not declared ")
-                # args.append(value)
                 args.append(var_value)
 
         return args
@@ -65,7 +78,7 @@ class CodeParser:
             var_key, var_val = var.split('=')
         else:
             var_key, var_val = var, None
- 
+
         self.__vars.set_var(
             var_type,
             var_key.strip(),
