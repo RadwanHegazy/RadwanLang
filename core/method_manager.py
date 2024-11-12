@@ -1,11 +1,12 @@
-from built_in_methods import cleanScreen, write
+from built_in_methods import cleanScreen, write, userInput
 
 class MethodManager :
     
     
     __BUILT_IN = {
         'cleanScreen' : cleanScreen,
-        'write' : write
+        'write' : write,
+        'userInput' : userInput
     }
 
     __USER_DEFINE = {}
@@ -14,9 +15,10 @@ class MethodManager :
         method_name = method_name.strip()
         assert method_name in self.__BUILT_IN.keys(), f"method '{method_name}' not found !"
         if any(args):
-            self.__BUILT_IN[method_name](*args)
+            response  = self.__BUILT_IN[method_name](*args)
         else:
-            self.__BUILT_IN[method_name]()
+            response = self.__BUILT_IN[method_name]()
 
+        return response
 
         
