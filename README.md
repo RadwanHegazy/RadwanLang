@@ -46,6 +46,14 @@ b: is_student = 0
 @write: "Your Age is  ", age
 @write: "Your salary is ", salary
 @write: "is Student ", is_student
+
+# do an calculation operation with built-in method calc
+f: result = 0
+
+@calc : result , 123 + 103 + (123 - 11) / 12
+
+@write: "The result of operation is : " , result
+
 ```
 
 ### Run `code.radwan`
