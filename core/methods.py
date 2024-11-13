@@ -42,12 +42,25 @@ class UserInput(BaseMethod) :
         return  (var_key, data)
     
 
+class Calc (BaseMethod) : 
+
+    def process(self):
+        var_val, operation = self.get_varVal_and_operation()
+        set_type = type(self.var_manager.get_it(var_val))
+        return var_val, set_type(eval(operation))
+    
+    def get_varVal_and_operation (self) : 
+        var_val, operation = self.line.split(':')[1].split(',')
+        return var_val.strip(), operation.strip()
+    
+
 class MethodManager (CodeUnit) : 
 
     __BUILT_IN_METHODS = {
         'cleanScreen' : CleanScreen ,
         'write' : Write,
-        'userInput' : UserInput
+        'userInput' : UserInput,
+        'calc' : Calc
     }
 
     def __init__(self, line : str, var_manager) -> None:
