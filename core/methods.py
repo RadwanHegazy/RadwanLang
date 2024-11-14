@@ -1,4 +1,4 @@
-from main import CodeUnit, BaseMethod
+from main import BaseMethod
 
 class CleanScreen(BaseMethod):
     
@@ -53,29 +53,67 @@ class Calc (BaseMethod) :
         var_val, operation = self.line.split(':')[1].split(',')
         return var_val.strip(), operation.strip()
     
+class If (BaseMethod) : 
 
-class MethodManager (CodeUnit) : 
 
-    __BUILT_IN_METHODS = {
-        'cleanScreen' : CleanScreen ,
-        'write' : Write,
-        'userInput' : UserInput,
-        'calc' : Calc
-    }
-
-    def __init__(self, line : str, var_manager) -> None:
-        self.var_manager = var_manager
-        self.args = []
-        self.line = line
-        if ':' in line :
-            self.method_name = self.line[1:self.line.index(':')].strip()
+    def process(self):
+        is_true, result = self.extract()
+        if is_true:
+            print(result)
+        return None
+    
+    def extract(self) : 
+        if '->' not in self.line:
+            raise Exception("you forget -> in the condition !")
+        
+        condition, output = self.line.split('->')
+        
+        output = output.strip()
+        if output.startswith('"'):
+            output = output[1:-1]
         else:
-            self.method_name = line.replace('@',"")
+            self.var_manager.get_it(output)
 
+        if "==" in condition:
+            return (
+                self.equals(
+                    *self.get_r_l(condition, '==')
+                    ),
+                    output
+                )
+        elif "!=" in condition:
+            return (
+                self.not_equals(
+                    *self.get_r_l(condition, '!=')
+                    ),
+                    output
+                )
+        else:
+            raise Exception("Invalid condition operation")
+        
+    def equals(self, r, l) :
+        return r == l
 
+    def not_equals(self, r, l) : 
+        return r != l
 
-    def response(self) -> None:
-        assert self.method_name in self.__BUILT_IN_METHODS, f"Method '{self.method_name}' not defined !"
-        method = self.__BUILT_IN_METHODS[self.method_name](self.line, self.var_manager)
-        return method.process()
+    def get_r_l (self, condition ,operation) : 
+        r,l = condition.split(operation)
+        r,l = r.split(":")[1].strip(), l.strip()
+        if r.startswith('"'):
+            r = r[1:-1]
+        else:
+            r = self.var_manager.get_it(r)
+            if r:
+                r = int(r) if r.isnumeric() else r
+
+        if l.startswith('"') : 
+            l = l[1:-1]
+        else:
+            if l.isnumeric() :
+                l = int(l)
+            else:
+                l = self.var_manager.get_it(l)
+                
+        return (r, l)
     
